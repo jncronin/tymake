@@ -32,6 +32,7 @@ namespace typroject
     public class Program
     {
         static string tools_ver_override = null;
+        public static string csc_override = null;
         public static int platform { get { return (int)Environment.OSVersion.Platform; } }
 
         static int Main(string[] args)
@@ -420,9 +421,54 @@ namespace typroject
             }
         }
 
-        internal static object resgen(string tools_ver)
+        internal static string resgen(string tools_ver)
         {
-            throw new NotImplementedException();
+            var cscname = csc(tools_ver);
+            var rgtest = new FileInfo(cscname).DirectoryName + "/resgen.exe";
+            if (new FileInfo(rgtest).Exists)
+                return rgtest;
+            var rgtest2 = new FileInfo(cscname).DirectoryName + "/resgen";
+            if (new FileInfo(rgtest2).Exists)
+                return rgtest2;
+
+            // try in PATH
+            var path = Environment.GetEnvironmentVariable("PATH");
+            var paths = path.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach(var p in paths)
+            {
+                var p2 = p.Trim();
+                if (p2 == string.Empty)
+                    continue;
+                rgtest = p2 + "/resgen.exe";
+                if (new FileInfo(rgtest).Exists)
+                    return rgtest;
+                rgtest2 = p2 + "/resgen";
+                if (new FileInfo(rgtest2).Exists)
+                    return rgtest2;
+            }
+
+            // Exhaustively search SDKs and Framework dir
+            var sdk_dir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) +
+                "\\Microsoft SDKs\\";
+            var sdk_di = new DirectoryInfo(sdk_dir);
+            if(sdk_di.Exists)
+            {
+                var rets = sdk_di.GetFiles("resgen*", SearchOption.AllDirectories);
+                if (rets.Length > 0)
+                    return rets[0].FullName;
+            }
+
+            string windir = Environment.GetEnvironmentVariable("windir");
+            string framework_dir = windir + "\\Microsoft.NET\\Framework";
+            var fw_di = new DirectoryInfo(framework_dir);
+            if(fw_di.Exists)
+            {
+                var rets = sdk_di.GetFiles("resgen*", SearchOption.AllDirectories);
+                if (rets.Length > 0)
+                    return rets[0].FullName;
+            }
+
+            return null;
         }
     }
 
@@ -436,7 +482,7 @@ namespace typroject
         public string configuration;
         internal string curdir;
         internal Uri uri_basedir, uri_curdir;
-        internal Dictionary<string, string> properties;
+        public Dictionary<string, string> properties;
         public string tools_ver;
         public string lib_dir;
         public OutputType output_type;
@@ -1240,6 +1286,16 @@ namespace typroject
             if (properties.ContainsKey("RuntimePath"))
                 create_directory(new DirectoryInfo(properties["RuntimePath"]));
 
+            /* Run any extra specified targets */
+            if(properties.ContainsKey("ExtraTargets"))
+            {
+                var ets = properties["ExtraTargets"].Split(new char [] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach(var et in ets)
+                {
+                    process_import(new FileInfo(et), this);
+                }
+            }
+
             /* Run any PrepareForBuild target */
             if (targets.ContainsKey("PrepareForBuild"))
             {
@@ -1275,14 +1331,24 @@ namespace typroject
             string tv = tools_ver;
             if (tools_ver_override != null)
                 tv = tools_ver_override;
-            bool is_v4plus;
-            string csc_cmd = Program.csc(tv, out is_v4plus);
+            bool is_v4plus = true;
+            string csc_cmd = null;
+            if (Program.csc_override != null)
+                csc_cmd = Program.csc_override;
+            else if (properties.ContainsKey("csc"))
+                csc_cmd = properties["csc"];
+            else
+                csc_cmd = Program.csc(tv, out is_v4plus);
             StringBuilder sb = new StringBuilder();
 
             if(csc_cmd.Contains("Roslyn"))
             {
                 // Roslyn allows language version to be specified
                 sb.Append("/langversion:Latest ");
+            }
+            else if(is_v4plus)
+            {
+                sb.Append("/langversion:Default ");
             }
 
             sb.Append("/out:\"");
@@ -1439,12 +1505,38 @@ namespace typroject
                     if (dstfi.Exists == false || dstfi.LastWriteTimeUtc < srcfi.LastWriteTimeUtc)
                     {
 #if DEBUG
-                        Console.WriteLine("Performing csc build step for " + new_fname);
+                        Console.WriteLine("Performing resgen build step for " + new_fname);
 #endif
 
                         var rsargs = "/compile \"" + fname + "\",\"" + new_fname + "\"";
-                        throw new NotImplementedException();
                         var rscmd = Program.resgen(tools_ver);
+
+                        if(rscmd == null)
+                        {
+                            Console.WriteLine("Unable to find resgen.exe");
+                            return -1;
+                        }
+
+                        System.Diagnostics.Process c_procrg = new System.Diagnostics.Process();
+                        c_procrg.EnableRaisingEvents = false;
+                        c_procrg.StartInfo.FileName = rscmd;
+
+                        c_procrg.StartInfo.Arguments = rsargs;
+
+                        c_procrg.StartInfo.CreateNoWindow = true;
+                        c_procrg.StartInfo.UseShellExecute = false;
+                        c_procrg.StartInfo.RedirectStandardOutput = true;
+                        if (!c_procrg.Start())
+                            throw new Exception();
+                        output.WriteLine(c_procrg.StandardOutput.ReadToEnd());
+                        c_procrg.WaitForExit();
+
+                        if (c_procrg.ExitCode != 0)
+                        {
+                            //output.WriteLine("Building returned " + c_proc.ExitCode.ToString());
+                            return c_procrg.ExitCode;
+                        }
+                        fname = new_fname;
                     }
                     else
                         fname = new_fname;
@@ -1654,13 +1746,23 @@ namespace typroject
             }
         }
 
+        string get_csc()
+        {
+            if (Program.csc_override != null)
+                return Program.csc_override;
+            else if (properties.ContainsKey("csc"))
+                return properties["csc"];
+            else
+                return Program.csc(tools_ver);
+        }
+
         private void gen_res_code(XPathNavigator n, XmlNamespaceManager nm)
         {
             var resx_file = process_string(n.SelectSingleNode("@ResxFilePath", nm).Value, properties, items);
             var os_file = process_string(n.SelectSingleNode("@OutputSourceFilePath", nm).Value, properties, items);
             var aname = process_string(n.SelectSingleNode("@AssemblyName", nm).Value, properties, items);
 
-            var csc = new FileInfo(Program.csc(tools_ver));
+            var csc = new FileInfo(get_csc());
             var resgen = add_dir_split(csc.DirectoryName) + "resgen.exe";
             if (!(new FileInfo(resgen)).Exists)
                 throw new NotSupportedException();

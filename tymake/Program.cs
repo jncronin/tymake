@@ -36,6 +36,7 @@ namespace tymake
                 Console.Out, Console.Out);
             new TyProject().Execute(s);
             new TyProjectLibDirFunction().Execute(s);
+            new TyProjectSetCscFunction().Execute(s);
             new RuleForFunction().Execute(s);
             new BuildCommandStatement().Execute(s);
             new AutoDirStatement().Execute(s);

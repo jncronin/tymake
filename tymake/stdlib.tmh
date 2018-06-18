@@ -99,7 +99,7 @@ if(!defined(STDLIB_TMH))
 		return typroject(name, TYPROJECT_CONFIG, TYPROJECT_TOOLSVER, TYPROJECT_UNSAFE);
 	}
 
-	function _find(string path, string name, array _path_splits, array _exts)
+	function _find(string path, string name, array _path_splits, array _exts, int ask_add_path)
 	{
 		foreach(_path_split in _path_splits)
 		{
@@ -124,11 +124,14 @@ if(!defined(STDLIB_TMH))
 						_ret_dir = dir(_test2);
 						if(_ret_dir != "")
 						{
-							_add = input("Add " + _ret_dir + " to PATH? (y/n)", "n");
-							if(_add == "y" || _add == "Y")
+							if(ask_add_path == 1)
 							{
-								PATH += ";" + _ret_dir;
-								export PATH;
+								_add = input("Add " + _ret_dir + " to PATH? (y/n)", "n");
+								if(_add == "y" || _add == "Y")
+								{
+									PATH += ";" + _ret_dir;
+									export PATH;
+								}
 							}
 						}
 					}
@@ -153,15 +156,15 @@ if(!defined(STDLIB_TMH))
 
 	export function find(string name, string desc, string test)
 	{
-		return find(name, desc, test, []);
+		return find(name, desc, test, [], 0);
 	}
 
 	export function find(string name, string desc, void test, array extra_paths)
 	{
-		return find(name, desc, "", extra_paths);
+		return find(name, desc, "", extra_paths, 0);
 	}
 
-	export function find(string name, string desc, string test, array extra_paths)
+	export function find(string name, string desc, string test, array extra_paths, int ask_add_path)
 	{
 		_path_splits = PATH.split(PATH_SPLIT);
 		_path_splits.add("");
@@ -180,14 +183,14 @@ if(!defined(STDLIB_TMH))
 			test = name;
 		}
 
-		_ret = _find(test, name, _path_splits, _exts);
+		_ret = _find(test, name, _path_splits, _exts, ask_add_path);
 		if(_ret != "")
 		{
 			return _ret;
 		}
 
 		_new_path = input("Please provide the full path of " + name + " (" + desc + ")");
-		_ret = _find(_new_path, name, _path_splits, _exts);
+		_ret = _find(_new_path, name, _path_splits, _exts, ask_add_path);
 		if(_ret != "")
 		{
 			return _ret;

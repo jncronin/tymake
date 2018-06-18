@@ -120,6 +120,10 @@ namespace tymake
             {
                 var o = passed_args[0].objval;
                 p.assembly_name = o["AssemblyName"].strval;
+                foreach(var kvp in o)
+                {
+                    p.properties[kvp.Key] = kvp.Value.strval;
+                }
 
                 return new Expression.EvalResult(p.build(new List<string>(), new List<string>(), new List<string>(), do_unsafe));
             }
@@ -140,6 +144,31 @@ namespace tymake
         public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
         {
             return new Expression.EvalResult(typroject.Program.ref_dir(passed_args[0].strval));
+        }
+    }
+
+    class TyProjectSetCscFunction : FunctionStatement
+    {
+        public TyProjectSetCscFunction()
+        {
+            name = "typroject_setcsc";
+            args = new List<FunctionArg>
+            {
+                new FunctionArg { name = "loc", argtype = Expression.EvalResult.ResultType.String }
+            };
+        }
+
+        public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
+        {
+            if(passed_args[0].strval == "default")
+            {
+                typroject.Program.csc_override = null;
+            }
+            else
+            {
+                typroject.Program.csc_override = passed_args[0].strval;
+            }
+            return new Expression.EvalResult(0);
         }
     }
 }
