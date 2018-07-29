@@ -598,14 +598,14 @@ namespace tymake_lib
                 FuncCall fsite = new FuncCall { target = f.target };
                 fsite.args = new List<Expression>(f.args);
                 fsite.args.Insert(0, label);
-                string m = fsite.Mangle(s);
+                string m = fsite.Mangle(s, out var ers);
 
                 switch (elabel.Type)
                 {
                     case EvalResult.ResultType.String:
                         if(m == "5splitss")
                         {
-                            string[] split = elabel.strval.Split(new string[] { f.args[0].Evaluate(s).strval }, StringSplitOptions.None);
+                            string[] split = elabel.strval.Split(new string[] { ers[1].strval }, StringSplitOptions.None);
                             EvalResult[] ret = new EvalResult[split.Length];
                             for (int i = 0; i < split.Length; i++)
                                 ret[i] = new EvalResult(split[i]);
@@ -613,33 +613,33 @@ namespace tymake_lib
                         }
                         else if(m == "9substringsi")
                         {
-                            return new EvalResult(elabel.strval.Substring((int)f.args[0].Evaluate(s).AsInt));
+                            return new EvalResult(elabel.strval.Substring((int)ers[1].AsInt));
                         }
                         else if(m == "9substringsii")
                         {
-                            return new EvalResult(elabel.strval.Substring((int)f.args[0].Evaluate(s).AsInt, (int)f.args[1].Evaluate(s).AsInt));
+                            return new EvalResult(elabel.strval.Substring((int)ers[1].AsInt, (int)ers[2].AsInt));
                         }
                         break;
 
                     case EvalResult.ResultType.Array:
                         if (m == "3addai")
                         {
-                            elabel.arrval.Add(new EvalResult(f.args[0].Evaluate(s).intval));
+                            elabel.arrval.Add(new EvalResult(ers[1].intval));
                             return new EvalResult();
                         }
                         else if (m == "3addas")
                         {
-                            elabel.arrval.Add(new EvalResult(f.args[0].Evaluate(s).strval));
+                            elabel.arrval.Add(new EvalResult(ers[1].strval));
                             return new EvalResult();
                         }
                         else if (m == "3addao")
                         {
-                            elabel.arrval.Add(new EvalResult(f.args[0].Evaluate(s).objval));
+                            elabel.arrval.Add(new EvalResult(ers[1].objval));
                             return new EvalResult();
                         }
                         else if (m == "3addaa")
                         {
-                            elabel.arrval.Add(new EvalResult(f.args[0].Evaluate(s).arrval));
+                            elabel.arrval.Add(new EvalResult(ers[1].arrval));
                             return new EvalResult();
                         }
                         else if (m == "3addav")
@@ -654,32 +654,32 @@ namespace tymake_lib
                         }
                         else if (m == "8addrangeaa")
                         {
-                            elabel.arrval.AddRange(f.args[0].Evaluate(s).arrval);
+                            elabel.arrval.AddRange(ers[1].arrval);
                             return new EvalResult();
                         }
                         else if (m == "6insertaii")
                         {
-                            elabel.arrval.Insert((int)f.args[1].Evaluate(s).intval, new EvalResult(f.args[0].Evaluate(s).intval));
+                            elabel.arrval.Insert((int)ers[1].intval, new EvalResult(ers[2].intval));
                             return new EvalResult();
                         }
                         else if (m == "6insertais")
                         {
-                            elabel.arrval.Insert((int)f.args[1].Evaluate(s).intval, new EvalResult(f.args[0].Evaluate(s).strval));
+                            elabel.arrval.Insert((int)ers[1].intval, new EvalResult(ers[2].strval));
                             return new EvalResult();
                         }
                         else if (m == "6insertaio")
                         {
-                            elabel.arrval.Insert((int)f.args[1].Evaluate(s).intval, new EvalResult(f.args[0].Evaluate(s).objval));
+                            elabel.arrval.Insert((int)ers[1].intval, new EvalResult(ers[2].objval));
                             return new EvalResult();
                         }
                         else if (m == "6insertaia")
                         {
-                            elabel.arrval.Insert((int)f.args[1].Evaluate(s).intval, new EvalResult(f.args[0].Evaluate(s).arrval));
+                            elabel.arrval.Insert((int)ers[1].intval, new EvalResult(ers[2].arrval));
                             return new EvalResult();
                         }
                         else if (m == "6removeai")
                         {
-                            elabel.arrval.RemoveAt((int)f.args[0].Evaluate(s).intval);
+                            elabel.arrval.RemoveAt((int)ers[1].intval);
                             return new EvalResult();
                         }
                         break;
@@ -687,21 +687,21 @@ namespace tymake_lib
                     case EvalResult.ResultType.Object:
                         if(m == "11containskeyos")
                         {
-                            return new EvalResult(elabel.objval.ContainsKey(f.args[0].Evaluate(s).strval) ? 1 : 0);
+                            return new EvalResult(elabel.objval.ContainsKey(ers[1].strval) ? 1 : 0);
                         }
                         else if(m == "3addoss")
                         {
-                            elabel.objval[f.args[0].Evaluate(s).strval] = new EvalResult(f.args[1].Evaluate(s).strval);
+                            elabel.objval[ers[1].strval] = new EvalResult(ers[2].strval);
                             return new EvalResult();
                         }
                         else if(m == "3addoso")
                         {
-                            elabel.objval[f.args[0].Evaluate(s).strval] = new EvalResult(f.args[1].Evaluate(s).objval);
+                            elabel.objval[ers[1].strval] = new EvalResult(ers[2].objval);
                             return new EvalResult();
                         }
                         else if(m == "3getos")
                         {
-                            return elabel.objval[f.args[0].Evaluate(s).strval];
+                            return elabel.objval[ers[1].strval];
                         }
                         if (elabel.objval.ContainsKey(m))
                         {
@@ -709,8 +709,8 @@ namespace tymake_lib
                             if (feval.Type == EvalResult.ResultType.Function)
                             {
                                 List<EvalResult> fargs = new List<EvalResult>();
-                                foreach (Expression e in fsite.args)
-                                    fargs.Add(e.Evaluate(s));
+                                for (int i = 1; i < ers.Count; i++)
+                                    fargs.Add(ers[i]);
                                 return feval.funcval.Run(s, fargs);                                
                             }
                         }
@@ -769,12 +769,17 @@ namespace tymake_lib
         public string target;
         public List<Expression> args;
 
-        public string Mangle(MakeState s)
+        public string Mangle(MakeState s, out List<Expression.EvalResult> ers)
         {
-            List<Expression.EvalResult.ResultType> ers = new List<EvalResult.ResultType>();
+            ers = new List<EvalResult>();
+            var ert = new List<EvalResult.ResultType>();
             foreach (var arg in args)
-                ers.Add(arg.Evaluate(s).Type);
-            return Mangle(target, ers);
+            {
+                var er = arg.Evaluate(s);
+                ers.Add(er);
+                ert.Add(er.Type);
+            }
+            return Mangle(target, ert);
         }
 
         public static string Mangle(string target, List<Expression.EvalResult.ResultType> args)
@@ -818,12 +823,9 @@ namespace tymake_lib
 
         public override EvalResult Evaluate(MakeState s)
         {
-            var mangled_name = Mangle(s);
+            var mangled_name = Mangle(s, out var args_to_pass);
             if (s.funcs.ContainsKey(mangled_name))
             {
-                List<EvalResult> args_to_pass = new List<EvalResult>();
-                foreach (Expression arg in args)
-                    args_to_pass.Add(arg.Evaluate(s));
                 // add these here because error messages for a function
                 //  call should relate to the location the function is
                 //  called rather than defined
@@ -842,7 +844,7 @@ namespace tymake_lib
                 }
             }*/
 
-            throw new Statement.SyntaxException("unable to find function " + Mangle(s), this);
+            throw new Statement.SyntaxException("unable to find function " + Mangle(s, out var resultTypes), this);
         }
 
         static Dictionary<string, List<string>> mangle_all_cache = new Dictionary<string, List<string>>();
