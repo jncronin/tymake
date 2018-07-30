@@ -99,7 +99,7 @@ if(!defined(STDLIB_TMH))
 		return typroject(name, TYPROJECT_CONFIG, TYPROJECT_TOOLSVER, TYPROJECT_UNSAFE);
 	}
 
-	function _find(string path, string name, array _path_splits, array _exts, int ask_add_path)
+	function _find(string path, string name, array _path_splits, array _exts, int ask_add_path, int disp_using)
 	{
 		foreach(_path_split in _path_splits)
 		{
@@ -117,7 +117,10 @@ if(!defined(STDLIB_TMH))
 				_test2 = _test + _ext;
 				if(exists(_test2))
 				{
-					print("Using " + _test2 + " for " + name + "\n");
+					if(disp_using == 1)
+					{
+						print("Using " + _test2 + " for " + name + "\n");
+					}
 
 					if(_path_split == "")
 					{
@@ -144,6 +147,11 @@ if(!defined(STDLIB_TMH))
 		return "";
 	}
 
+	function _find(string path, string name, array _path_splits, array _exts, int ask_add_path)
+	{
+		return _find(path, name, _path_splits, _exts, ask_add_path, 1);
+	}
+
 	export function find(string name, string desc)
 	{
 		return find(name, desc, "");
@@ -162,6 +170,28 @@ if(!defined(STDLIB_TMH))
 	export function find(string name, string desc, void test, array extra_paths)
 	{
 		return find(name, desc, "", extra_paths, 0);
+	}
+
+	export function findsilent(string name)
+	{
+		return findsilent(name, []);
+	}
+
+	export function findsilent(string name, array extra_paths)
+	{
+		_path_splits = PATH.split(PATH_SPLIT);
+		_path_splits.add("");
+		_path_splits.add("/");
+
+		foreach(_extra_path in extra_paths)
+		{
+			_path_splits.add(_extra_path);
+		}
+
+		_exts = [ "" ];
+		_exts.addrange(EXEC_EXTENSIONS);
+
+		return _find(name, name, _path_splits, _exts, 0, 0);
 	}
 
 	export function find(string name, string desc, string test, array extra_paths, int ask_add_path)
@@ -244,6 +274,10 @@ if(!defined(STDLIB_TMH))
 
 	export function input(string prompt, array options, string default)
 	{
+		if(options.length == 1)
+		{
+			default = options[0];
+		}
 		if(DEFAULTS == 1 && default != "")
 		{
 			return default;
