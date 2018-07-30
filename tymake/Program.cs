@@ -52,12 +52,14 @@ namespace tymake
                 s.SetDefine("EXEC_EXTENSIONS", new Expression.EvalResult(new Expression.EvalResult[] { new Expression.EvalResult("") }));
                 s.SetDefine("PATH_SPLIT", new Expression.EvalResult(":"));
                 s.SetDefine("DIR_SPLIT", new Expression.EvalResult("/"));
+                s.SetDefine("PLATFORM", new Expression.EvalResult("unix"));
             }
             else
             {
                 s.SetDefine("EXEC_EXTENSIONS", new Expression.EvalResult(new Expression.EvalResult[] { new Expression.EvalResult(".exe") }));
                 s.SetDefine("PATH_SPLIT", new Expression.EvalResult(";"));
                 s.SetDefine("DIR_SPLIT", new Expression.EvalResult("\\"));
+                s.SetDefine("PLATFORM", new Expression.EvalResult("win"));
             }
 
             /* Include the standard library */
