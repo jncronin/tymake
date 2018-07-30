@@ -262,7 +262,7 @@ namespace tymake_lib
                 throw new Exception("null not allowed in expression");
         }
 
-        public class EvalResult
+        public class EvalResult : IEquatable<EvalResult>
         {
             public enum ResultType { Int, String, Void, Function, MakeRule, Object, Array, Any, Null, Undefined };
 
@@ -394,6 +394,29 @@ namespace tymake_lib
                     default:
                         throw new NotSupportedException();
                 }
+            }
+
+            public bool Equals(EvalResult other)
+            {
+                if (Type != other.Type)
+                    return false;
+                switch(Type)
+                {
+                    case ResultType.Array:
+                        if (arrval.Count != other.arrval.Count)
+                            return false;
+                        for (int i = 0; i < arrval.Count; i++)
+                        {
+                            if (!arrval[i].Equals(other.arrval[i]))
+                                return false;
+                        }
+                        return true;
+                    case ResultType.Int:
+                        return intval == other.intval;
+                    case ResultType.String:
+                        return strval == other.strval;
+                }
+                throw new NotImplementedException();
             }
         }
     }
@@ -681,6 +704,11 @@ namespace tymake_lib
                         {
                             elabel.arrval.RemoveAt((int)ers[1].intval);
                             return new EvalResult();
+                        }
+                        else if(m == "8containsai" || m == "8containsas")
+                        {
+
+                            return new EvalResult(elabel.arrval.Contains(ers[1]) ? 1 : 0);
                         }
                         break;
 
