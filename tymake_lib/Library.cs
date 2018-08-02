@@ -57,6 +57,7 @@ namespace tymake_lib
             new ToByteArrayFunction(2).Execute(s);
             new ToByteArrayFunction(1).Execute(s);
             new ToByteArrayFunction(8).Execute(s);
+            new ToByteArrayFunction(0).Execute(s);
             new ThrowFunction().Execute(s);
             new InputFunction().Execute(s);
             new ExistsFunction().Execute(s);
@@ -201,7 +202,10 @@ namespace tymake_lib
 
         public ToByteArrayFunction(int byte_count)
         {
-            name = "tobytearray" + byte_count.ToString();
+            if (byte_count > 0)
+                name = "tobytearray" + byte_count.ToString();
+            else
+                name = "tobytearray";
             args = new List<FunctionArg> { new FunctionArg { argtype = Expression.EvalResult.ResultType.Any } };
             bc = byte_count;
         }
@@ -213,7 +217,8 @@ namespace tymake_lib
                 throw new Exception("Cannot call " + name + " with " + passed_args[0].ToString());
 
             List<Expression.EvalResult> r = new List<Expression.EvalResult>();
-            for(int i = 0; i < bc; i++)
+            int max = bc == 0 ? ret.Count : bc;
+            for(int i = 0; i < max; i++)
             {
                 if (i < ret.Count)
                     r.Add(new Expression.EvalResult(ret[i]));
