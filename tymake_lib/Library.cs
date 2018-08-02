@@ -1105,6 +1105,9 @@ namespace tymake_lib
             WriteFunction wf = new WriteFunction(fs);
             ret[wf.Mangle()] = new Expression.EvalResult(wf);
 
+            WriteFunction2 wf2 = new WriteFunction2(fs);
+            ret[wf2.Mangle()] = new Expression.EvalResult(wf2);
+
             CloseFunction cf = new CloseFunction(fs);
             ret[cf.Mangle()] = new Expression.EvalResult(cf);
 
@@ -1172,6 +1175,44 @@ namespace tymake_lib
                 List<Expression.EvalResult> buf = passed_args[1].arrval;
                 int offset = (int)passed_args[2].intval;
                 int len = (int)passed_args[3].intval;
+
+                fs.Position = obj["Pos"].intval;
+                byte[] csbuf = new byte[len];
+
+                for (int i = 0; i < len; i++)
+                {
+                    int sidx = i + offset;
+                    byte v = (byte)buf[sidx].intval;
+
+                    csbuf[i] = v;
+                }
+
+                fs.Write(csbuf, 0, len);
+                obj["Pos"].intval = (int)fs.Position;
+                obj["Length"].intval = (int)fs.Length;
+
+                return new Expression.EvalResult(0);
+            }
+        }
+
+        internal class WriteFunction2 : FunctionStatement
+        {
+            System.IO.FileStream fs;
+
+            public WriteFunction2(System.IO.FileStream fstream)
+            {
+                fs = fstream;
+                name = "Write";
+                args = new List<FunctionArg> { new FunctionArg { name = "this", argtype = Expression.EvalResult.ResultType.Object },
+                    new FunctionArg { name = "buf", argtype = Expression.EvalResult.ResultType.Array } };
+            }
+
+            public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
+            {
+                Dictionary<string, Expression.EvalResult> obj = passed_args[0].objval;
+                List<Expression.EvalResult> buf = passed_args[1].arrval;
+                int offset = 0;
+                int len = buf.Count;
 
                 fs.Position = obj["Pos"].intval;
                 byte[] csbuf = new byte[len];
