@@ -736,10 +736,7 @@ namespace tymake_lib
                             EvalResult feval = elabel.objval[m];
                             if (feval.Type == EvalResult.ResultType.Function)
                             {
-                                List<EvalResult> fargs = new List<EvalResult>();
-                                for (int i = 1; i < ers.Count; i++)
-                                    fargs.Add(ers[i]);
-                                return feval.funcval.Run(s, fargs);                                
+                                return feval.funcval.Run(s, ers);                                
                             }
                         }
 
