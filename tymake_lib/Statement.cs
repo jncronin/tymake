@@ -374,24 +374,47 @@ namespace tymake_lib
         public override Expression.EvalResult Execute(MakeState s)
         {
             Expression.EvalResult e = enumeration.Evaluate(s);
-            if (e.Type != Expression.EvalResult.ResultType.Array)
-                throw new Exception("does not evaluate to array");
 
-            foreach (Expression.EvalResult i in e.arrval)
+            switch(e.Type)
             {
-                //MakeState cur_s = s.Clone();
-                var cur_s = s;
-                cur_s.SetLocalDefine(val, i);
-                Expression.EvalResult ret = code.Execute(cur_s);
-                if (ret.AsInt != 0)
-                    return ret;
-                if (cur_s.returns != null)
-                {
-                    s.returns = cur_s.returns;
+                case Expression.EvalResult.ResultType.Array:
+                    foreach (Expression.EvalResult i in e.arrval)
+                    {
+                        //MakeState cur_s = s.Clone();
+                        var cur_s = s;
+                        cur_s.SetLocalDefine(val, i);
+                        Expression.EvalResult ret = code.Execute(cur_s);
+                        if (ret.AsInt != 0)
+                            return ret;
+                        if (cur_s.returns != null)
+                        {
+                            s.returns = cur_s.returns;
+                            return new Expression.EvalResult(0);
+                        }
+                    }
                     return new Expression.EvalResult(0);
-                }
+
+                case Expression.EvalResult.ResultType.Object:
+                    // take a snapsnot now so we can still do updating from script code
+                    List<string> objssk = new List<string>(e.objval.Keys);
+                    foreach(var k in objssk)
+                    {
+                        var cur_s = s;
+                        cur_s.SetLocalDefine(val, new Expression.EvalResult(k));
+                        Expression.EvalResult ret = code.Execute(cur_s);
+                        if (ret.AsInt != 0)
+                            return ret;
+                        if (cur_s.returns != null)
+                        {
+                            s.returns = cur_s.returns;
+                            return new Expression.EvalResult(0);
+                        }
+                    }
+                    return new Expression.EvalResult(0);
+
+                default:
+                    throw new ParseException("foreach: does not evaluate to array or object", sline, scol);
             }
-            return new Expression.EvalResult(0);
         }
     }
 
