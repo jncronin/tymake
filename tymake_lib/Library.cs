@@ -69,6 +69,8 @@ namespace tymake_lib
             new DirectoryFunction { name = "ext" }.Execute(s);
             new DirectoryFunction { name = "files" }.Execute(s);
             new DirectoryFunction(2) { name = "files" }.Execute(s);
+            new DirectoryFunction { name = "sfiles" }.Execute(s);
+            new DirectoryFunction(2) { name = "sfiles" }.Execute(s);
             new DirectoryFunction { name = "dirs" }.Execute(s);
             new DownloadFunction(false).Execute(s);
             new DownloadFunction(true).Execute(s);
@@ -837,7 +839,12 @@ namespace tymake_lib
         {
             string fname = passed_args[0].strval;
             if (Statement.FileDirExists(fname))
+            {
+                var fi = new FileInfo(fname);
+                if ((fi.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                    return new Expression.EvalResult(2);
                 return new Expression.EvalResult(1);
+            }
             else
                 return new Expression.EvalResult(0);
         }
@@ -931,11 +938,16 @@ namespace tymake_lib
 
         public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
         {
-            System.IO.FileInfo fi = new System.IO.FileInfo(passed_args[0].strval);
             if (name == "dir")
+            {
+                System.IO.FileInfo fi = new System.IO.FileInfo(passed_args[0].strval);
+
                 return new Expression.EvalResult(fi.DirectoryName);
+            }
             else if (name == "basefname")
             {
+                System.IO.FileInfo fi = new System.IO.FileInfo(passed_args[0].strval);
+
                 string fname = fi.Name;
                 if (fname.Contains('.'))
                     fname = fname.Substring(0, fname.LastIndexOf('.'));
@@ -944,30 +956,67 @@ namespace tymake_lib
             }
             else if (name == "ext")
             {
+                System.IO.FileInfo fi = new System.IO.FileInfo(passed_args[0].strval);
+
                 return new Expression.EvalResult(fi.Extension);
             }
-            else if(name == "files")
+            else if (name == "files")
             {
-                DirectoryInfo di = new DirectoryInfo(passed_args[0].strval);
-
                 List<Expression.EvalResult> ret = new List<Expression.EvalResult>();
-                if(di.Exists)
+                try
                 {
-                    if (passed_args.Count == 2)
+                    DirectoryInfo di = new DirectoryInfo(passed_args[0].strval);
+
+                    if (di.Exists)
                     {
-                        foreach (var f in di.GetFiles(passed_args[1].strval))
+                        if (passed_args.Count == 2)
                         {
-                            ret.Add(new Expression.EvalResult(f.FullName));
+                            foreach (var f in di.GetFiles(passed_args[1].strval))
+                            {
+                                ret.Add(new Expression.EvalResult(f.FullName));
+                            }
                         }
-                    }
-                    else
-                    {
-                        foreach (var f in di.GetFiles())
+                        else
                         {
-                            ret.Add(new Expression.EvalResult(f.FullName));
+                            foreach (var f in di.GetFiles())
+                            {
+                                ret.Add(new Expression.EvalResult(f.FullName));
+                            }
                         }
                     }
                 }
+                catch (ArgumentException)
+                { }
+
+                return new Expression.EvalResult(ret);
+            }
+            else if (name == "sfiles")
+            {
+                List<Expression.EvalResult> ret = new List<Expression.EvalResult>();
+                try
+                {
+                    DirectoryInfo di = new DirectoryInfo(passed_args[0].strval);
+
+                    if (di.Exists)
+                    {
+                        if (passed_args.Count == 2)
+                        {
+                            foreach (var f in di.GetFiles(passed_args[1].strval))
+                            {
+                                ret.Add(new Expression.EvalResult(f.FullName));
+                            }
+                        }
+                        else
+                        {
+                            foreach (var f in di.GetFiles())
+                            {
+                                ret.Add(new Expression.EvalResult(f.Name));
+                            }
+                        }
+                    }
+                }
+                catch (ArgumentException)
+                { }
 
                 return new Expression.EvalResult(ret);
             }
