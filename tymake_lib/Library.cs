@@ -1102,74 +1102,13 @@ namespace tymake_lib
             ret["minute"] = new Expression.EvalResult(ct.Minute);
             ret["second"] = new Expression.EvalResult(ct.Second);
             ret["millisecond"] = new Expression.EvalResult(ct.Millisecond);
-
-            var sdf = new ShortDateFunction(ct);
-            ret[sdf.Mangle()] = new Expression.EvalResult(sdf);
-            var stf = new ShortTimeFunction(ct);
-            ret[stf.Mangle()] = new Expression.EvalResult(stf);
-            var ldf = new LongDateFunction(ct);
-            ret[ldf.Mangle()] = new Expression.EvalResult(ldf);
-            var ltf = new LongTimeFunction(ct);
-            ret[ltf.Mangle()] = new Expression.EvalResult(ltf);
+            ret["shortdate"] = new Expression.EvalResult(ct.ToShortDateString());
+            ret["shorttime"] = new Expression.EvalResult(ct.ToShortTimeString());
+            ret["longdate"] = new Expression.EvalResult(ct.ToLongDateString());
+            ret["longtime"] = new Expression.EvalResult(ct.ToLongTimeString());
+            ret["tz"] = new Expression.EvalResult(ct.IsDaylightSavingTime() ? TimeZone.CurrentTimeZone.DaylightName : TimeZone.CurrentTimeZone.StandardName);
 
             return new Expression.EvalResult(ret);
-        }
-
-        internal class ShortDateFunction : FunctionStatement
-        {
-            DateTime dt;
-            internal ShortDateFunction(DateTime cdt)
-            {
-                dt = cdt;
-                name = "shortdate";
-                args = new List<FunctionArg> { new FunctionArg { name = "this", argtype = Expression.EvalResult.ResultType.Object } };
-            }
-            public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
-            {
-                return new Expression.EvalResult(dt.ToShortDateString());
-            }
-        }
-        internal class ShortTimeFunction : FunctionStatement
-        {
-            DateTime dt;
-            internal ShortTimeFunction(DateTime cdt)
-            {
-                dt = cdt;
-                name = "shorttime";
-                args = new List<FunctionArg> { new FunctionArg { name = "this", argtype = Expression.EvalResult.ResultType.Object } };
-            }
-            public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
-            {
-                return new Expression.EvalResult(dt.ToShortTimeString());
-            }
-        }
-        internal class LongDateFunction : FunctionStatement
-        {
-            DateTime dt;
-            internal LongDateFunction(DateTime cdt)
-            {
-                dt = cdt;
-                name = "longdate";
-                args = new List<FunctionArg> { new FunctionArg { name = "this", argtype = Expression.EvalResult.ResultType.Object } };
-            }
-            public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
-            {
-                return new Expression.EvalResult(dt.ToLongDateString());
-            }
-        }
-        internal class LongTimeFunction : FunctionStatement
-        {
-            DateTime dt;
-            internal LongTimeFunction(DateTime cdt)
-            {
-                dt = cdt;
-                name = "longtime";
-                args = new List<FunctionArg> { new FunctionArg { name = "this", argtype = Expression.EvalResult.ResultType.Object } };
-            }
-            public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
-            {
-                return new Expression.EvalResult(dt.ToLongTimeString());
-            }
         }
     }
 
