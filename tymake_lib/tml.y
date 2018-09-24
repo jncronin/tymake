@@ -5,7 +5,7 @@
 %partial
 
 %token	EQUALS COLON MUL LPAREN RPAREN AMP PLUS MINUS DOLLARS COMMA NEWLINE FUNC ASSIGN NOT NOTEQUAL LEQUAL GEQUAL LBRACE RBRACE
-%token	LBRACK RBRACK DOT LT GT LSHIFT RSHIFT SEMICOLON LOR LAND OR AND APPEND ASSIGNIF
+%token	LBRACK RBRACK DOT LT GT LSHIFT RSHIFT SEMICOLON LOR LAND OR AND APPEND ASSIGNIF NULLCOALESCE	
 %token	IF ELSE INCLUDE RULEFOR INPUTS DEPENDS ALWAYS SHELLCMD TYPROJECT SOURCES MKDIR FUNCTION RETURN EXPORT
 %token	INTEGER STRING VOID ARRAY OBJECT FUNCREF ANY NULL
 %token	FOR FOREACH IN WHILE DO
@@ -32,7 +32,7 @@
 %token <strval> STRING LABEL
 
 %type <bval> export
-%type <exprval> expr expr2 expr3 expr4 expr5 expr6 expr7 expr7a expr8 expr9 expr10 expr11 strlabelexpr funccall labelexpr labelexpr2 funcrefexpr
+%type <exprval> expr expr1p5 expr2 expr3 expr4 expr5 expr6 expr7 expr7a expr8 expr9 expr10 expr11 strlabelexpr funccall labelexpr labelexpr2 funcrefexpr
 %type <stmtval> stmtblock stmtlist stmt stmt2 define ifblock cmd include funcdef forblock foreachblock whileblock doblock
 %type <exprlist> exprlist arrayexpr
 %type <tokval> assignop
@@ -129,15 +129,19 @@ whileblock	:	WHILE LPAREN expr RPAREN stmtblock	{ $$ = new WhileBlock { test = $
 doblock		:	DO stmtblock WHILE LPAREN expr RPAREN	{ $$ = new DoBlock { test = $5, code = $2 }; }
 			;
 
-exprlist	:	exprlist COMMA expr2			{ $$ = new List<Expression>($1); $$.Add($3); }
-			|	expr2							{ $$ = new List<Expression> { $1 }; }
+exprlist	:	exprlist COMMA expr				{ $$ = new List<Expression>($1); $$.Add($3); }
+			|	expr							{ $$ = new List<Expression> { $1 }; }
 			|									{ $$ = new List<Expression>(); }
 			;
 
 include		:	INCLUDE expr					{ $$ = new IncludeStatement { include_file = $2 }; }
 			;
 
-expr		:	LPAREN expr2 RPAREN				{ $$ = $2; }
+expr		:	LPAREN expr RPAREN				{ $$ = $2; }
+			|	expr1p5							{ $$ = $1; }
+			;
+
+expr1p5		:	expr2 NULLCOALESCE expr1p5		{ $$ = new Expression { a = $1, b = $3, op = Tokens.NULLCOALESCE }; }
 			|	expr2							{ $$ = $1; }
 			;
 

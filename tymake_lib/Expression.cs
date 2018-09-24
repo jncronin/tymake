@@ -250,7 +250,15 @@ namespace tymake_lib
 
                     return new EvalResult(ea.AsInt & eb.AsInt);
 
+                case Tokens.NULLCOALESCE:
+                    ea = a.Evaluate(s);
+                    eb = b.Evaluate(s);
 
+                    if (ea.Type == EvalResult.ResultType.Undefined || ea.Type == EvalResult.ResultType.Null ||
+                        ea.Type == EvalResult.ResultType.Void)
+                        return eb;
+                    else
+                        return ea;
             }
                     
             throw new NotImplementedException(op.ToString());

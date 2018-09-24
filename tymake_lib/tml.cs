@@ -5,10 +5,10 @@
 //  See accompanying file GPLEXcopyright.rtf.
 //
 //  GPLEX Version:  1.2.2
-//  Machine:  DESKTOP-JOHN
-//  DateTime: 31/10/2017 22:26:21
+//  Machine:  LAPTOP-JOHN2
+//  DateTime: 24/09/2018 14:28:24
 //  UserName: jncro
-//  GPLEX input file <tml.lex - 06/05/2017 13:38:51>
+//  GPLEX input file <tml.lex - 24/09/2018 14:16:49>
 //  GPLEX frame file <embedded resource>
 //
 //  Option settings: parser, minimize
@@ -123,8 +123,8 @@ namespace tymake_lib
         
         enum Result {accept, noMatch, contextFound};
 
-        const int maxAccept = 135;
-        const int initial = 136;
+        const int maxAccept = 136;
+        const int initial = 137;
         const int eofNum = 0;
         const int goStart = -1;
         const int INITIAL = 0;
@@ -165,18 +165,18 @@ StringBuilder sb;
         }
     };
 
-    static int[] startState = new int[] {136, 139, 130, 0};
+    static int[] startState = new int[] {137, 140, 131, 0};
 
-    static Table[] NxS = new Table[141] {
+    static Table[] NxS = new Table[142] {
 /* NxS[   0] */ new Table(0, 0, 0, null),
-/* NxS[   1] */ new Table(61, 1, -1, new short[] {115}),
+/* NxS[   1] */ new Table(61, 1, -1, new short[] {116}),
 /* NxS[   2] */ new Table(0, 0, -1, null),
 /* NxS[   3] */ new Table(0, 0, -1, null),
-/* NxS[   4] */ new Table(38, 1, -1, new short[] {114}),
+/* NxS[   4] */ new Table(38, 1, -1, new short[] {115}),
 /* NxS[   5] */ new Table(0, 0, -1, null),
 /* NxS[   6] */ new Table(0, 0, -1, null),
 /* NxS[   7] */ new Table(0, 0, -1, null),
-/* NxS[   8] */ new Table(61, 1, -1, new short[] {113}),
+/* NxS[   8] */ new Table(61, 1, -1, new short[] {114}),
 /* NxS[   9] */ new Table(0, 0, -1, null),
 /* NxS[  10] */ new Table(0, 0, -1, null),
 /* NxS[  11] */ new Table(0, 0, -1, null),
@@ -184,9 +184,9 @@ StringBuilder sb;
           12, 12, 12, 12}),
 /* NxS[  13] */ new Table(0, 0, -1, null),
 /* NxS[  14] */ new Table(0, 0, -1, null),
-/* NxS[  15] */ new Table(60, 2, -1, new short[] {109, 110}),
-/* NxS[  16] */ new Table(61, 1, -1, new short[] {108}),
-/* NxS[  17] */ new Table(61, 2, -1, new short[] {106, 107}),
+/* NxS[  15] */ new Table(60, 2, -1, new short[] {110, 111}),
+/* NxS[  16] */ new Table(61, 1, -1, new short[] {109}),
+/* NxS[  17] */ new Table(61, 2, -1, new short[] {107, 108}),
 /* NxS[  18] */ new Table(35, 88, -1, new short[] {18, -1, -1, -1, -1, -1, 
           -1, -1, -1, -1, -1, -1, -1, 18, 18, 18, 18, 18, 18, 18, 18, 18, 
           18, -1, -1, -1, -1, -1, -1, -1, 18, 18, 18, 18, 18, 18, 18, 18, 
@@ -767,60 +767,61 @@ StringBuilder sb;
 /* NxS[ 109] */ new Table(0, 0, -1, null),
 /* NxS[ 110] */ new Table(0, 0, -1, null),
 /* NxS[ 111] */ new Table(0, 0, -1, null),
-/* NxS[ 112] */ new Table(10, 1, 112, new short[] {-1}),
-/* NxS[ 113] */ new Table(0, 0, -1, null),
+/* NxS[ 112] */ new Table(0, 0, -1, null),
+/* NxS[ 113] */ new Table(10, 1, 113, new short[] {-1}),
 /* NxS[ 114] */ new Table(0, 0, -1, null),
 /* NxS[ 115] */ new Table(0, 0, -1, null),
-/* NxS[ 116] */ new Table(10, 83, 116, new short[] {-1, 116, 116, 116, 116, 116, 
-          116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 
-          116, 116, -1, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 
-          116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 
-          116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 
-          116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, -1}),
-/* NxS[ 117] */ new Table(0, 0, -1, null),
+/* NxS[ 116] */ new Table(0, 0, -1, null),
+/* NxS[ 117] */ new Table(10, 83, 117, new short[] {-1, 117, 117, 117, 117, 117, 
+          117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 
+          117, 117, -1, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 
+          117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 
+          117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 
+          117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, -1}),
 /* NxS[ 118] */ new Table(0, 0, -1, null),
 /* NxS[ 119] */ new Table(0, 0, -1, null),
 /* NxS[ 120] */ new Table(0, 0, -1, null),
-/* NxS[ 121] */ new Table(48, 10, -1, new short[] {128, 128, 128, 128, 128, 128, 
-          128, 128, 122, 122}),
-/* NxS[ 122] */ new Table(48, 10, -1, new short[] {122, 122, 122, 122, 122, 122, 
-          122, 122, 122, 122}),
-/* NxS[ 123] */ new Table(0, 0, -1, null),
+/* NxS[ 121] */ new Table(0, 0, -1, null),
+/* NxS[ 122] */ new Table(48, 10, -1, new short[] {129, 129, 129, 129, 129, 129, 
+          129, 129, 123, 123}),
+/* NxS[ 123] */ new Table(48, 10, -1, new short[] {123, 123, 123, 123, 123, 123, 
+          123, 123, 123, 123}),
 /* NxS[ 124] */ new Table(0, 0, -1, null),
 /* NxS[ 125] */ new Table(0, 0, -1, null),
 /* NxS[ 126] */ new Table(0, 0, -1, null),
 /* NxS[ 127] */ new Table(0, 0, -1, null),
-/* NxS[ 128] */ new Table(48, 10, -1, new short[] {129, 129, 129, 129, 129, 129, 
-          129, 129, 122, 122}),
-/* NxS[ 129] */ new Table(48, 10, -1, new short[] {122, 122, 122, 122, 122, 122, 
-          122, 122, 122, 122}),
-/* NxS[ 130] */ new Table(42, 6, 131, new short[] {132, 131, 131, 131, 131, 133}),
-/* NxS[ 131] */ new Table(42, 6, 131, new short[] {-1, 131, 131, 131, 131, -1}),
-/* NxS[ 132] */ new Table(47, 1, -1, new short[] {135}),
-/* NxS[ 133] */ new Table(42, 1, -1, new short[] {134}),
-/* NxS[ 134] */ new Table(0, 0, -1, null),
+/* NxS[ 128] */ new Table(0, 0, -1, null),
+/* NxS[ 129] */ new Table(48, 10, -1, new short[] {130, 130, 130, 130, 130, 130, 
+          130, 130, 123, 123}),
+/* NxS[ 130] */ new Table(48, 10, -1, new short[] {123, 123, 123, 123, 123, 123, 
+          123, 123, 123, 123}),
+/* NxS[ 131] */ new Table(42, 6, 132, new short[] {133, 132, 132, 132, 132, 134}),
+/* NxS[ 132] */ new Table(42, 6, 132, new short[] {-1, 132, 132, 132, 132, -1}),
+/* NxS[ 133] */ new Table(47, 1, -1, new short[] {136}),
+/* NxS[ 134] */ new Table(42, 1, -1, new short[] {135}),
 /* NxS[ 135] */ new Table(0, 0, -1, null),
-/* NxS[ 136] */ new Table(33, 93, -1, new short[] {1, 2, -1, 3, -1, 4, 
-          -1, 5, 6, 7, 8, 9, 10, 11, 137, 12, 12, 12, 12, 12, 12, 12, 
-          12, 12, 12, 13, 14, 15, 16, 17, 138, -1, 18, 18, 18, 18, 18, 18, 
+/* NxS[ 136] */ new Table(0, 0, -1, null),
+/* NxS[ 137] */ new Table(33, 93, -1, new short[] {1, 2, -1, 3, -1, 4, 
+          -1, 5, 6, 7, 8, 9, 10, 11, 138, 12, 12, 12, 12, 12, 12, 12, 
+          12, 12, 12, 13, 14, 15, 16, 17, 139, -1, 18, 18, 18, 18, 18, 18, 
           18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 
           18, 18, 18, 18, 19, -1, 20, -1, 18, -1, 21, 18, 18, 22, 23, 24, 
           18, 18, 25, 18, 18, 18, 18, 26, 27, 18, 18, 28, 29, 18, 18, 30, 
           31, 18, 18, 18, 32, 33, 34}),
-/* NxS[ 137] */ new Table(42, 6, -1, new short[] {111, -1, -1, -1, -1, 112}),
-/* NxS[ 138] */ new Table(61, 1, -1, new short[] {105}),
-/* NxS[ 139] */ new Table(10, 83, 116, new short[] {117, 116, 116, 116, 116, 116, 
-          116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 
-          116, 116, 118, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 
-          116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 
-          116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 
-          116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 140}),
-/* NxS[ 140] */ new Table(34, 83, 119, new short[] {120, 119, 119, 119, 119, 119, 
-          119, 119, 119, 119, 119, 119, 119, 119, 121, 121, 121, 121, 121, 121, 121, 121, 
-          122, 122, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 
-          119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 
-          119, 119, 119, 119, 119, 119, 119, 119, 119, 119, 123, 119, 119, 119, 124, 119, 
-          119, 119, 119, 119, 119, 119, 125, 119, 119, 119, 126, 119, 127}),
+/* NxS[ 138] */ new Table(42, 6, -1, new short[] {112, -1, -1, -1, -1, 113}),
+/* NxS[ 139] */ new Table(61, 3, -1, new short[] {105, -1, 106}),
+/* NxS[ 140] */ new Table(10, 83, 117, new short[] {118, 117, 117, 117, 117, 117, 
+          117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 
+          117, 117, 119, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 
+          117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 
+          117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 
+          117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 117, 141}),
+/* NxS[ 141] */ new Table(34, 83, 120, new short[] {121, 120, 120, 120, 120, 120, 
+          120, 120, 120, 120, 120, 120, 120, 120, 122, 122, 122, 122, 122, 122, 122, 122, 
+          123, 123, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 
+          120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 
+          120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 124, 120, 120, 120, 125, 120, 
+          120, 120, 120, 120, 120, 120, 126, 120, 120, 120, 127, 120, 128}),
     };
 
 int NextState() {
@@ -1444,44 +1445,47 @@ return (int)Tokens.ALWAYS;
 return (int)Tokens.ASSIGNIF;
             break;
         case 106:
-return (int)Tokens.GEQUAL;
+return (int)Tokens.NULLCOALESCE;
             break;
         case 107:
-return (int)Tokens.RSHIFT;
+return (int)Tokens.GEQUAL;
             break;
         case 108:
-return (int)Tokens.EQUALS;
+return (int)Tokens.RSHIFT;
             break;
         case 109:
-return (int)Tokens.LSHIFT;
+return (int)Tokens.EQUALS;
             break;
         case 110:
-return (int)Tokens.LEQUAL;
+return (int)Tokens.LSHIFT;
             break;
         case 111:
-BEGIN(comment); ++comment_nesting;
+return (int)Tokens.LEQUAL;
             break;
         case 112:
-/* // comments to end of line */
+BEGIN(comment); ++comment_nesting;
             break;
         case 113:
-return (int)Tokens.APPEND;
+/* // comments to end of line */
             break;
         case 114:
-return (int)Tokens.LAND;
+return (int)Tokens.APPEND;
             break;
         case 115:
-return (int)Tokens.NOTEQUAL;
+return (int)Tokens.LAND;
             break;
         case 116:
-sb.Append(yytext);
+return (int)Tokens.NOTEQUAL;
             break;
         case 117:
+sb.Append(yytext);
+            break;
+        case 118:
 /* error - unterminated string constant */
         /* generate error message */
 		throw new Exception("Unterminated string constant: " + sb.ToString());
             break;
-        case 118:
+        case 119:
 /* saw closing quote - all done */
         BEGIN(INITIAL);
         /* return string constant token type and
@@ -1490,15 +1494,15 @@ sb.Append(yytext);
 		yylval.strval = sb.ToString();
 		return (int)Tokens.STRING;
             break;
-        case 119:
+        case 120:
 sb.Append(yytext[1]);
             break;
-        case 120:
+        case 121:
 sb.Append('\"');
             break;
-        case 121:
-        case 128:
+        case 122:
         case 129:
+        case 130:
 /* octal escape sequence */
         int result;
      
@@ -1509,39 +1513,39 @@ sb.Append('\"');
      
         sb.Append((char)result);
             break;
-        case 122:
+        case 123:
 /* generate error - bad escape sequence; something
         * like '\48' or '\0777777'
         */
 		throw new Exception("Bad escape sequence: " + yytext);
             break;
-        case 123:
+        case 124:
 sb.Append('\b');
             break;
-        case 124:
+        case 125:
 sb.Append('\f');
             break;
-        case 125:
+        case 126:
 sb.Append('\n');
             break;
-        case 126:
+        case 127:
 sb.Append('\r');
             break;
-        case 127:
+        case 128:
 sb.Append('\t');
             break;
-        case 130:
         case 131:
+        case 132:
 /* Eat non-comment delimiters */
             break;
-        case 132:
         case 133:
+        case 134:
 /* Eat a / or * if it doesn't match comment sequence */
             break;
-        case 134:
+        case 135:
 ++comment_nesting;
             break;
-        case 135:
+        case 136:
 if (--comment_nesting == 0) BEGIN(INITIAL);
             break;
         default:

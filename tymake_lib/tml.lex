@@ -42,6 +42,7 @@
 "&&"			return (int)Tokens.LAND;
 "|"				return (int)Tokens.OR;
 "&"				return (int)Tokens.AND;
+"??"			return (int)Tokens.NULLCOALESCE;
 
 if				return (int)Tokens.IF;
 else			return (int)Tokens.ELSE;
