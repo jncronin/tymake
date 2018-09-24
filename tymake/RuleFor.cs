@@ -289,7 +289,7 @@ namespace tymake
                         targ_fi = new System.IO.FileInfo(tfile);
                         if ((targ_fi.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
                             targ_fi = new System.IO.DirectoryInfo(tfile);
-                        if (targ_fi.Exists == false || targ_fi.LastWriteTime.CompareTo(targ_lwt) < 0)
+                        if (targ_fi.Exists == false || targ_fi.LastWriteTime.CompareTo(targ_lwt - new TimeSpan(0, 0, 1)) < 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("Rule failed to build " + tfile);
