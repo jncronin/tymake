@@ -49,6 +49,7 @@ namespace tymake_lib
             new VarGenFunction(Expression.EvalResult.ResultType.String).Execute(s);
             new VarGenFunction(Expression.EvalResult.ResultType.Object).Execute(s);
             new VarGetFunction().Execute(s);
+            new EscapeFunction().Execute(s);
             new DefinedFunction().Execute(s);
             new DefineBlobFunction().Execute(s);
             new ToIntFunction().Execute(s);
@@ -136,6 +137,23 @@ namespace tymake_lib
             return p.output.Execute(s);
         }
 
+    }
+
+    class EscapeFunction : FunctionStatement
+    {
+        public EscapeFunction()
+        {
+            name = "escape";
+            args = new List<FunctionArg>()
+            {
+                new FunctionArg {argtype = Expression.EvalResult.ResultType.String }
+            };
+        }
+
+        public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
+        {
+            return new Expression.EvalResult(passed_args[0].strval.Replace("\\", "\\\\"));
+        }
     }
 
     class VarGenFunction : FunctionStatement
