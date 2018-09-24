@@ -46,29 +46,37 @@ namespace tymake
             public override Expression.EvalResult Run(MakeState s, List<Expression.EvalResult> passed_args)
             {
                 string target = passed_args[0].strval;
-                Uri furi = new Uri(new Uri(Environment.CurrentDirectory + "/"), target);
-                target = furi.AbsolutePath;
-                List<TyMakeState.MakeRuleMatch> matches = ((TyMakeState)s).GetRules(target);
-                matches.Sort(make_compare);
 
-                foreach (TyMakeState.MakeRuleMatch match in matches)
+                try
                 {
-                    if (match.mr == null)
-                        return new Expression.EvalResult(0);
-                    int ret = match.mr.Build(s, target, match.wc_pattern);
-                    if (ret != 0)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Error building " + target + " (" + ret.ToString() + ")");
-                        Console.ResetColor();
-                        return new Expression.EvalResult(ret);
-                    }
-                    if (ret == 0)
-                        return new Expression.EvalResult(0);
-                }
+                    Uri furi = new Uri(new Uri(Environment.CurrentDirectory + "/"), target);
+                    target = furi.AbsolutePath;
+                    List<TyMakeState.MakeRuleMatch> matches = ((TyMakeState)s).GetRules(target);
+                    matches.Sort(make_compare);
 
-                ((TyMakeState)s).GetRules(target);
-                return new Expression.EvalResult(RUN_NO_RULE);
+                    foreach (TyMakeState.MakeRuleMatch match in matches)
+                    {
+                        if (match.mr == null)
+                            return new Expression.EvalResult(0);
+                        int ret = match.mr.Build(s, target, match.wc_pattern);
+                        if (ret != 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Error building " + target + " (" + ret.ToString() + ")");
+                            Console.ResetColor();
+                            return new Expression.EvalResult(ret);
+                        }
+                        if (ret == 0)
+                            return new Expression.EvalResult(0);
+                    }
+
+                    ((TyMakeState)s).GetRules(target);
+                    return new Expression.EvalResult(RUN_NO_RULE);
+                }
+                catch (UriFormatException)
+                {
+                    throw new ParseException("Invalid path: " + Environment.CurrentDirectory + "/" + target, sline, scol);
+                }
             }
         }
     }
