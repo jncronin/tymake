@@ -650,6 +650,10 @@ namespace tymake_lib
                         {
                             return new EvalResult(elabel.strval.Substring((int)ers[1].AsInt, (int)ers[2].AsInt));
                         }
+                        else if(m == "8containsss")
+                        {
+                            return new EvalResult(elabel.strval.Contains(ers[1].strval) ? -1 : 0);
+                        }
                         break;
 
                     case EvalResult.ResultType.Array:

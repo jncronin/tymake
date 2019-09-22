@@ -230,6 +230,11 @@ if(!defined(STDLIB_TMH))
 		exit(-1);
 	}
 
+	export function find(string name, string desc, string test, array extra_paths)
+	{
+		return find(name, desc, test, extra_paths, 0);
+	}
+
 	export function find(string name)
 	{
 		return find(name, "");
@@ -321,5 +326,16 @@ if(!defined(STDLIB_TMH))
 		}
 
 		return input(prompt, options, default);
+	}
+
+	export function filecontains(string file, string needle)
+	{
+		f = fopen(file);
+		buf = [];
+		f.Read(buf, 0, f.Length);
+		f.Close();
+
+		str = arrtostr(buf);
+		return str.contains(needle);
 	}
 }
