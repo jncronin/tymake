@@ -1027,7 +1027,7 @@ namespace tymake_lib
                         {
                             foreach (var f in di.GetFiles(passed_args[1].strval))
                             {
-                                ret.Add(new Expression.EvalResult(f.FullName));
+                                ret.Add(new Expression.EvalResult(f.Name));
                             }
                         }
                         else

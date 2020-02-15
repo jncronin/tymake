@@ -146,6 +146,15 @@ namespace tymake_lib
 
         public override Expression.EvalResult Execute(MakeState s)
         {
+            // if this is a conditional assign, we don't need to evaluate the RHS
+            //  if the LHS is already assigned
+            if (assignop == Tokens.ASSIGNIF & tok_name is LabelExpression)
+            {
+                var tn = ((LabelExpression)tok_name).val;
+                if (s.IsDefined(tn))
+                    return new Expression.EvalResult(0);
+            }
+
             Expression.EvalResult e = val.Evaluate(s);
 
             if (tok_name is LabelExpression)
